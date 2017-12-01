@@ -1,18 +1,18 @@
 <template>
 	<div class="content">
-		<div class="padding-100"></div>
+		<!-- <div class="padding-100"></div> -->
 		
 		<div class="loan-list clear">
 			<LoanItem v-for="(item,index) in typeProduct" :key="index" :idx="index" :top="top" :item="item"></LoanItem>
 		</div>
-		<x-header :left-options="{backText:''}" :title="title" :headColor="headColor" 
-			style="background-color:#fff;"></x-header>
+		<!-- <x-header :left-options="{backText:''}" :title="title" :headColor="headColor" 
+			style="background-color:#fff;"></x-header> -->
 	</div>
 </template>
 <script>
 	import { XHeader} from 'vux';
 	import LoanItem from '@/components/loanItem/loanItem';
-	import { ajaxAsync } from '../../assets/js/public';
+	import { ajaxAsync,updateTitle } from '../../assets/js/public';
   	import { Bejson } from '../../assets/js/xmltojson';
   	import {stat_o2o} from '../../assets/js/stat_o2o.js';
 	export default{
@@ -85,6 +85,8 @@
 				}
 			}
 			this.title = _title;
+			//document.getElementsByTagName("title")[0].innerHTML = _title;
+			updateTitle(_title);
 			//获取贷款列表 
 			if(this.type){
 				this.getLoanList();

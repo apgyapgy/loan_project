@@ -1,6 +1,6 @@
 <template>
 	<div>
-    <div class="padding-100"></div>
+    <!-- <div class="padding-100"></div> -->
     <div class="container">
       <div class="font28 container-top">
         <div class="container-top-lf">
@@ -22,11 +22,11 @@
       <div class="content font26">
         <p>
           <label class="title">贷 款 金 额</label>
-          <span class="fl"><input class="input-money tangerine" type="number" value="0" v-model="money" @blur="getMoney">元<small class="gray">（{{loanDetail.amountMin}}-{{loanDetail.amountMax}}）</small></span>
+          <span class="fl"><input class="input-money tangerine" type="number" value="0" v-model="money">元<small class="gray">（{{loanDetail.amountMin}}-{{loanDetail.amountMax}}）</small></span>
         </p>
         <p>
           <label class="title">贷 款 期 限</label>
-          <span class="fl"><input class="input-day tangerine" type="number" value="0" v-model="day" @blur="getDay">日<small class="gray">（{{loanDetail.dueMin}}-{{loanDetail.dueMax}}）</small></span>
+          <span class="fl"><input class="input-day tangerine" type="number" value="0" v-model="day">日<small class="gray">（{{loanDetail.dueMin}}-{{loanDetail.dueMax}}）</small></span>
         </p>
         <p>
           <label class="title">预计还款金额</label>
@@ -62,13 +62,14 @@
       </div>
     </div>
     <div class="height50"></div>
+    <div class="padding-40"></div>
     <button class="submit" :class="{'disabled':!checkAble}" @click="apply">立即申请</button>
-    <x-header :left-options="{backText:''}" style="background: #ffffff;" :headColor="headColor">{{loanDetail.loanName}}</x-header>
+    <!-- <x-header :left-options="{backText:''}" style="background: #ffffff;" :headColor="headColor">{{loanDetail.loanName}}</x-header> -->
 	</div>
 </template>
 <script>
   import { XHeader, Flexbox, FlexboxItem, XInput, Toast, } from 'vux'
-  import { ajaxAsync } from '../../assets/js/public'
+  import { ajaxAsync,updateTitle } from '../../assets/js/public'
   import { Bejson } from '../../assets/js/xmltojson'
   import {stat_o2o} from '../../assets/js/stat_o2o.js';
   export default {
@@ -89,64 +90,70 @@
       }
     },
     watch:{
-      day:'getTotalInterest',
-      money:'getTotalInterest',
+      day:'checkDay',
+      money:'checkMoney',
     },
     methods: {
       getTotalInterest(){
         if(this.money && this.day && this.interest){
           //this.totalInterest = this.money + this.money * this.day * this.interest;
-          this.totalInterest = this.money + this.money * this.day * (this.loanDetail.loanRate/100);
+          this.totalInterest = this.money - 0 + this.money * this.day * (this.loanDetail.loanRate/100);
           //console.log('应付金额：'+this.totalInterest);
+        }
+      },
+      checkDay(){
+        if(this.day){
+          if(!(/^\+?[1-9][0-9]*$/).test(this.day)){//如果不是整数，改为整数
+            this.day = parseInt(this.day);
+          }
+          if(this.money){
+            this.getTotalInterest();
+          }
+        }
+      },
+      checkMoney(){
+        if(this.money){
+          if(!(/^\+?[1-9][0-9]*$/).test(this.money)){//如果不是整数，改为整数
+            this.money = parseInt(this.money);
+          }
+          if(this.day){
+            this.getTotalInterest();
+          }
         }
       },
       getMoney() {
         var val = this.money-0;
         if(val){
-          var re = /^\+?[1-9][0-9]*$/;
-          var _text = '请输入'+this.loanDetail.amountMin+'-'+this.loanDetail.amountMax+'之间的整数'
-          if(re.test(val)){
-              if(val>=this.loanDetail.amountMin-0 && val<=this.loanDetail.amountMax-0){
-                this.money = val;
-              }else {
-                this.$vux.toast.text(_text, 'default')
-              }
-          }else{
-            this.$vux.toast.text(_text, 'default')
-            if(typeof (this.money-0) == 'number'){
-              this.money = parseInt(this.money);
-            }
+          var _text = '贷款金额应为'+this.loanDetail.amountMin+'-'+this.loanDetail.amountMax+'之间的整数'
+          if(val < this.loanDetail.amountMin-0 || val > this.loanDetail.amountMax-0){
+            this.$vux.toast.text(_text, 'default');
+            return false;
           }
+          return true;
         }else {
           this.$vux.alert.show({
             title: '提示',
             content: '贷款金额必须填写',
           });
+          return false;
         }
       },
       getDay(){
         var val = this.day-0;
         if(val){
-          var re = /^\+?[1-9][0-9]*$/;
-          var _text = '请输入'+this.loanDetail.dueMin+'-'+this.loanDetail.dueMax+'之间的整数';
-          if(re.test(val)){
-            if(val>=this.loanDetail.dueMin-0 && val<=this.loanDetail.dueMax-0){
-              this.day = val;
-            }else {
-              this.$vux.toast.text(_text, 'default');
-            }
-          }else{
+          var _text = '贷款期限应为'+this.loanDetail.dueMin+'-'+this.loanDetail.dueMax+'之间的整数';
+          if(val < this.loanDetail.dueMin-0 || val > this.loanDetail.dueMax-0){
             this.$vux.toast.text(_text, 'default');
+            return false;
           }
+          return true;
         }else {
           this.$vux.alert.show({
             title: '提示',
             content: '贷款期限必须填写',
-          })
+          });
+          return false;
         }
-      },
-      change (val) {
-        console.log('change', val)
       },
       getLoanDetail:function(){
           var _this = this;
@@ -160,6 +167,8 @@
                   var _data = data.INF;
                   if(_data.rcd == '0000'){
                     _this.loanDetail = _data;
+                    updateTitle(_this.loanDetail.loanName);
+                    //document.getElementsByTagName("title")[0].innerHTML =_this.loanDetail.loanName;
                   }else{
                     _this.loanDetail = {};
                   }
@@ -182,20 +191,13 @@
       apply:function(){//点立即申请
         $(".input-money").blur();
         $(".input-day").blur();
+        if(!this.money || !this.day){
+          return;
+        }
         if(JSON.stringify(this.loanDetail)=='{}'){
           return;
         }
-        if(!this.day){
-          this.$vux.alert.show({
-            title: '提示',
-            content: '贷款金额必须填写',
-          });
-        }else if(!this.money){
-          this.$vux.alert.show({
-            title: '提示',
-            content: '贷款期限必须填写',
-          });
-        }else{
+        if(this.getMoney() && this.getDay()){
           var _this = this;
           var _phone = "";
           var _random = parseInt(Math.random()*this.phonePre.length);
@@ -204,25 +206,20 @@
             _phone += parseInt(Math.random()*10);
           }
           var _params = '<INF><transNo>0</transNo><action>saveInfo</action><loanFlag>1</loanFlag><loanId>'+this.loanDetail.id+'</loanId><loanMobile>'+_phone+'</loanMobile><loanAmount>'+this.money+'</loanAmount><loanTimes>'+this.day+'</loanTimes><repayAmount>'+this.totalInterest+'</repayAmount></INF>';
-          setTimeout(function(){
-            ajaxAsync({
-              obj:_this,
-              params:_params,
-              success:function(data){
-                var xmlobj = Bejson.loadXml(data);
-                var data = Bejson.xmltojson(xmlobj);
-                var _data = data.INF;
-                if(_data.rcd == '0000'){
-                  if(_this.loanDetail.loanLink){
-                    _this.$router.push({
-                      path:'/toLoan?type='+_this.type
-                    });
-                  }
+          ajaxAsync({
+            obj:_this,
+            params:_params,
+            success:function(data){
+              var xmlobj = Bejson.loadXml(data);
+              var data = Bejson.xmltojson(xmlobj);
+              var _data = data.INF;
+              if(_data.rcd == '0000'){
+                if(_this.loanDetail.loanLink){
+                  location.href = _this.loanDetail.loanLink;
                 }
               }
-            });
-          },100)
-          
+            }
+          });
           stat_o2o.oprStat(this.from,'dkcs_apply',"clk",this.type+'-'+this.money+'-'+this.day);
         }        
       }
@@ -249,6 +246,10 @@
   }
 </script>
 <style scoped>
+  .padding-40{
+    width:100%;
+    height:40px;
+  }
   .header{
     background: #FFFFFF;
   }

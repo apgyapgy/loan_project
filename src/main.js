@@ -15,7 +15,12 @@ Vue.use(VueWechat);
 Vue.use(AlertPlugin);
 Vue.use(ToastPlugin);
 Vue.use(LoadingPlugin)
-
+// Vue.directive('title', {
+//   inserted: function (el, binding) {
+//     document.title = el.innerText
+//     el.remove()
+//   }
+// })
 const FastClick = require('fastclick');
 FastClick.attach(document.body);
 /* eslint-disable no-new */

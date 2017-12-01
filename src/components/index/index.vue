@@ -1,6 +1,6 @@
 <template>
 	<div class="content">
-		<div class="padding-100"></div>
+		<!-- <div class="padding-100"></div> -->
 		<!-- banner -->
 		<swiper dots-position="center" :aspect-ratio="300/800" :auto="true" :loop="true" dots-class="dot">
 	      	<swiper-item class="swiper-demo-img" v-for="(item, index) in banner" :key="index">
@@ -32,13 +32,13 @@
 	    	<LoanItem v-for="(item,index) in cateProduct" :top="top" :key="index" :idx="index" :item="item"></LoanItem>
 	    </div>
 	    <!-- header -->
-		<x-header :left-options="{showBack: false}" :headColor="headColor" style="background-color:#fff;">贷款超市</x-header>
+		<!-- <x-header :left-options="{showBack:false}" :headColor="headColor" style="background-color:#fff;">贷款超市</x-header> -->
 	</div>
 </template>
 <script>
 	import { Swiper,SwiperItem,Grid,GridItem,XHeader} from 'vux';
 	import LoanItem from '@/components/loanItem/loanItem';
-  	import { ajaxAsync } from '../../assets/js/public';
+  	import { ajaxAsync,updateTitle } from '../../assets/js/public';
   	import { Bejson } from '../../assets/js/xmltojson';
   	import {stat_o2o} from '../../assets/js/stat_o2o.js';
 	export default{
@@ -175,6 +175,8 @@
 	      	}
 	      	localStorage.dkcsFrom = _from;
 	      	this.from = _from;
+	      	//document.getElementsByTagName("title")[0].innerHTML = '贷款超市';
+	      	updateTitle('贷款超市');
 	    }
 	}
 </script>
@@ -182,7 +184,7 @@
 	/*toast*/
 	#toast{
 		position:fixed;
-		top:1.1rem;
+		top:.5rem;
 		left:.1rem;
 		/*width:3.5rem;*/
 		height:.78rem;
@@ -191,7 +193,7 @@
 		font-size:.22rem;
 		line-height:.30rem;
 		border-radius:.2rem;
-		background:rgba(0,0,0,.6);
+		background:rgba(0,0,0,.7);
 		transition: all 2s ease-in-out;
 		z-index:10;
 		opacity:0;

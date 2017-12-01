@@ -6,12 +6,12 @@ let localhostDev = false;
 //如果是本地开发，就把localhostDev 设置成true，连接就是拼成‘http://localhost:8080/api/test’
 //生产环境，就把localhostDev 设置成false，连接就是拼成‘http://xxx.com/api/test’
 //let _host= localhostDev ? 'http://192.168.8.29:29030/kdy/courier-pre/courierAction' : 'https://o2omch.fuiou.com/';
-let _host = localhostDev ? 'http://192.168.8.29:29030/kdy/courier-pre/courierAction' : 'http://sjbkdy.fuiou.com:18916/kdy/courier-pre/courierAction';
-// let _hrefUrl = localhostDev ? '/#/' : 'https://static.fuiou.com/sys/ds/o2oh5/mch/#/';
-// let _imgHost ='https://static.fuiou.com/';
+let _host = localhostDev ? 'http://192.168.8.29:29030/kdy/courier-pre/courierAction' : 'https://sjbkdy.fuiou.com/kdy/courier-pre/courierAction';
+//let _host = localhostDev ? 'http://192.168.8.29:29030/kdy/courier-pre/courierAction' : 'http://sjbkdy.fuiou.com:18916/kdy/courier-pre/courierAction';
+// let _imgHost ='https://static.fuiou.com/';let _host = localhostDev ? 'http://192.168.8.29:29030/kdy/courier-pre/courierAction' : 'http://sjbkdy.fuiou.com:18916/kdy/courier-pre/courierAction';
 var ajaxAsync = function(options){/*url,params,success,fail,spinner*/
     if(options.obj){
-        options.obj.$vux.loading.show({
+        options.obj.$vux.loading.show({ 
             text: 'Loading'
         });
     }
@@ -42,5 +42,24 @@ var ajaxAsync = function(options){/*url,params,success,fail,spinner*/
             }
         });
 };
+var updateTitle = function(title) {
+    document.title = title
+    var mobile = navigator.userAgent.toLowerCase()
+    if (/iphone|ipad|ipod/.test(mobile)) {
+      var iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      // 替换成站标favicon路径或者任意存在的较小的图片即可
+      //iframe.setAttribute('src', 'static/user.png')
+      iframe.setAttribute('src', 'static/images/icon1.png');
+      var iframeCallback = function () {
+        setTimeout(function () {
+          iframe.removeEventListener('load', iframeCallback)
+          document.body.removeChild(iframe)
+        }, 0)
+      }
+      iframe.addEventListener('load', iframeCallback)
+      document.body.appendChild(iframe)
+    }
+}
 
-export { ajaxAsync }
+export { ajaxAsync,updateTitle }

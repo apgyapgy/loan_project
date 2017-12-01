@@ -1,11 +1,4 @@
 <template>
-	<!-- 
-	amountMax:"3333"	applyNums:"678"
-	applyReq:"gsdagsda"	categoryId:"1"
-	id:"24" length:1
-	loanId:"10000001" loanName:"aaaa"
-	loanOrder:"1" loanRate:"0.25"
-	logoImg:"https://static.fuiou.com/sys/o2o2/2017/11/14/1510645340793.jpg" restNums:"0" -->
 	<div class="loan-item" @click.stop="jumpInfo(item.loanId)">
 		<div class="loan-item-top">
 			<div class="loan-icon">
@@ -20,7 +13,7 @@
 			</div>
 			<div class="remaining-quota">本期剩余{{item.restNums}}个名额</div>
 		</div>
-		<div class="loan-item-bottom">{{item.title}}</div>
+		<div class="loan-item-bottom">{{item.keyWords}}</div>
 	</div>
 </template>
 <script>
